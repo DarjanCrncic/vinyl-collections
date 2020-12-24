@@ -1,0 +1,28 @@
+<%- include("partials/header.ejs"); -%>
+
+<div class="table-div">
+  <h1>View other users collection!</h1>
+
+  <form action="/searchUser" method="post">
+    <label for="searchedUser">Search user:</label>
+    <div class="search-div">
+      <input type="text" class="form-control search-bar" name="searchedUser" value="">
+      <button class="btn home-btn" type="submit" name="button">Search</button>
+    </div>
+  </form>
+
+
+  <ul>
+    <% users.forEach(function(user){ %>
+    <li>
+      <form class="" action="/showUser" method="post">
+        <input type="hidden" name="userId" value="<%=user._id%>">
+        <input type="hidden" name="username" value="<%=user.username%>">
+        <button type="submit" class="btn-link users-list"><%=user.username%></button>
+      </form>
+    </li>
+    <% }) %>
+  </ul>
+</div>
+
+<%- include("partials/footer.ejs"); -%>

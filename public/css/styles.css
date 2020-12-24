@@ -1,0 +1,183 @@
+
+body {
+  background-color: white;
+  font-size: 1.7rem;
+  color: #52575d;
+}
+
+.jumbotron{
+  background-color: white;
+  margin-left: 10%;
+}
+/* header */
+
+.navbar {
+  background-color: #dfd8c8;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  border: 0;
+  border-radius: 0;
+  margin-bottom: 0;
+  font-size: 12px;
+  letter-spacing: 4px;
+}
+
+.logout{
+  font-weight: bold;
+}
+
+.record-img {
+  position: relative;
+  margin-top: -20px;
+  width: 80px;
+}
+
+.container {
+  margin: 0;
+  width: 100%;
+}
+
+/* home */
+
+label {
+  margin-bottom: 3px;
+  margin-top: 3px;
+}
+
+.home-btn-form{
+  display: inline;
+}
+
+.home-btn{
+  color: white;
+  margin: 0;
+  background-color: #cabfab;
+  border-color: #cabfab;
+  width: 80px;
+}
+
+/* collection */
+.table>tbody>tr>td {
+  vertical-align: middle;
+  padding: 4px;
+}
+
+.table-div {
+  font-size: 1.65rem;
+  width: 96%;
+  margin: 0 2% 0 2%;
+  padding-top: 2%;
+
+}
+
+.cover-img {
+  width: 40px;
+  height: 40px;
+}
+
+.button-div {
+  width: 96%;
+  margin: 0 2% 0 2%;
+}
+
+.hidden-column {
+  visibility: hidden;
+}
+
+.show-icon {
+  visibility: visible;
+}
+
+.users-list{
+  color: black;
+  font-size: 2rem;
+  font-weight: 500;
+}
+
+a{
+  color: #52575d;
+}
+a:hover{
+  color: #41444b;
+}
+
+.search-div{
+  width: 30rem;
+  margin-bottom: 1em;
+}
+
+.form-control.search-bar{
+  display:inline-block;
+  width: 15rem;
+}
+
+.input{
+  padding-left: 0;
+}
+
+
+/* submit page */
+form input {
+  display: block;
+  padding: 0.25%;
+  margin: 0.25%
+}
+
+.submit-div {
+  width: 25%;
+  margin: 0 5% 1% 5%;
+  padding-top: 5%;
+}
+
+.btn-primary {
+  margin-left: 5%;
+  background-color: #cabfab;
+  border-color: #cabfab;
+}
+
+.add-button {
+  margin-left: 0;
+}
+
+.btn-primary:hover, .home-btn:hover {
+  color: white;
+  background-color: #52575d;
+  border-color: #52575d;
+}
+
+
+.editDelete {
+  display: inline;
+}
+
+/* footer */
+
+.page-container {
+  position: relative;
+  min-height: 89vh;
+  display: block;
+
+}
+
+.content-wrap {
+  padding-bottom: 8%;    /* Footer height */
+
+}
+
+.footer {
+  position: absolute;
+  display: inline;
+  bottom: 0;
+  width: 100%;
+  height: 10%;
+  background-color: #dfd8c8;
+  text-align: center;
+
+}
+
+.copyright {
+  color: #f0f5f9;
+  margin-top: 25px;
+  font-size: 16px;
+  font-weight: 500;
+}

@@ -1,0 +1,16 @@
+<%- include("partials/header.ejs"); -%>
+
+  <form class="" action="/submitChange" method="post">
+    <div class="submit-div">
+    <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
+    <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">
+    <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release">
+    <input class="form-control" type="text" value="<%=record.rating %>" name="rating" placeholder="Your rating">
+    <input class="form-control" type="text" value="<%=record.condition %>" name="condition" placeholder="Condition">
+    <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL">
+    <input type="hidden" name="recordId" value="<%= record._id %>">
+    </div>
+    <button class="btn btn-primary submit-button" type="submit" name="button">Submit</button>
+  </form>
+
+<%- include("partials/footer.ejs"); -%>
