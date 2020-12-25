@@ -2,11 +2,17 @@
 
   <form class="" action="/submitChange" method="post">
     <div class="submit-div">
-    <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
+    <label for="artist">Artist name:</label>
     <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">
+    <label for="name">Album name:</label>
+    <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
+    <label for="year">Year of release:</label>
     <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release">
+    <label for="rating">Rating:</label>
     <input class="form-control" type="text" value="<%=record.rating %>" name="rating" placeholder="Your rating">
+    <label for="condition">Vinyl condition:</label>
     <input class="form-control" type="text" value="<%=record.condition %>" name="condition" placeholder="Condition">
+    <label for="img">Cover image URL:</label>
     <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL">
     <input type="hidden" name="recordId" value="<%= record._id %>">
     </div>
