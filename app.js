@@ -82,6 +82,7 @@ app.post("/login", function(req,res){
   req.login(user, function(err){
     if(err){
       console.log(err);
+      res.redirect("/login");
     }else{
       passport.authenticate("local")(req,res,function(){
         res.redirect("/collection");
