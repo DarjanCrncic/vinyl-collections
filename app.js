@@ -29,8 +29,8 @@ const recordsSchema = new mongoose.Schema({
   img: {type: String, default: "-"},
   artist: {type: String, default: "-"},
   name: {type: String, default: "-"},
-  year: {type: Number, default: "-"},
-  rating: {type: Number, default: "-"},
+  year: {type: String, default: "-"},
+  rating: {type: String, default: "-"},
   condition: {type: String, default: "-"},
   userId: String
 });
