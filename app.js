@@ -7,11 +7,14 @@ const bcrypt = require("bcrypt");
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const session = require("express-session");
+const _ = require('lodash');
 
 const app=express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
+
+//////////////////// configuring mongodb models, session, passport
 
 app.use(session({
   secret: process.env.SECRET_STRING,
@@ -29,7 +32,7 @@ const recordsSchema = new mongoose.Schema({
   img: {type: String, default: "-"},
   artist: {type: String, default: "-"},
   name: {type: String, default: "-"},
-  year: {type: String, default: "-"},
+  year: Number,
   rating: {type: String, default: "-"},
   condition: {type: String, default: "-"},
   userId: String
@@ -40,7 +43,7 @@ const Record = new mongoose.model("Record", recordsSchema);
 const usersSchema = new mongoose.Schema({
   username: String,
   password: String,
-  sorting: {type: String, default: "artist"}
+  sorting: {type: String, default: "artist"},
 });
 usersSchema.plugin(passportLocalMongoose);
 const User = new mongoose.model("User", usersSchema);
@@ -58,7 +61,9 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-//////////////// start of gets and posts
+var sortingOrder=1;
+
+//////////////// gets and posts
 
 app.post("/register", function(req,res){
   User.register({username: req.body.username}, req.body.password, function(err, user){
@@ -84,7 +89,7 @@ app.post("/login", function(req,res){
       console.log(err);
       res.redirect("/login");
     }else{
-      passport.authenticate("local")(req,res,function(){
+      passport.authenticate("local",{failureRedirect: '/login'})(req,res,function(){
         res.redirect("/collection");
       });
     }
@@ -119,8 +124,11 @@ app.get("/", function(req, res){
 /////////////////////// collections section
 
 app.get("/collection", function(req,res){
+
   if(req.isAuthenticated()){
-    Record.find({userId: req.user._id}).sort(req.user.sorting).exec(function(err, foundRecords) {
+    var sort = {};
+    sort[req.user.sorting] = sortingOrder;
+    Record.find({userId: req.user._id}).sort(sort).exec(function(err, foundRecords) {
       if(!err){
         res.render("collection", {records: foundRecords})
       }else{
@@ -132,10 +140,36 @@ app.get("/collection", function(req,res){
   }
 });
 
+/////////////// sortingCode
+
+app.get("/collection/:sortingType", function(req,res){
+  if(req.isAuthenticated()){
+    let sortingStatus= req.params.sortingType;
+    if(req.params.sortingType.substring(0,1)!="r"){
+      sortingOrder=1;
+    }
+    else{
+      sortingOrder=-1;
+      sortingStatus = req.params.sortingType.substring(1);
+    }
+    User.findByIdAndUpdate({_id: req.user._id},{sorting: sortingStatus}, function(err, foundUser){
+      if(!err){
+        res.redirect("/collection");
+      }else{
+        console.log(err);
+      }
+    });
+  }else{
+    res.render("login");
+  }
+});
+
+//////////////////////////////
+
 app.post("/submit",function(req,res){
   const record = new Record({
-    name: req.body.name,
-    artist: req.body.artist,
+    name: _.startCase(req.body.name),
+    artist: _.startCase(req.body.artist),
     year: req.body.year,
     condition: req.body.condition,
     img: req.body.img,
@@ -158,8 +192,8 @@ app.post("/edit", function(req,res){
 
 app.post("/submitChange", function(req,res){
   Record.findByIdAndUpdate({_id: req.body.recordId}, {
-    name: req.body.name,
-    artist: req.body.artist,
+    name: _.startCase(req.body.name),
+    artist: _.startCase(req.body.artist),
     year: req.body.year,
     condition: req.body.condition,
     img: req.body.img,
@@ -247,36 +281,22 @@ app.post("/searchUser", function(req,res){
   }
 });
 
-/////////////// sortingCode
 
-app.get("/collection/:sortingType", function(req,res){
-  if(req.isAuthenticated()){
-    User.findByIdAndUpdate({_id: req.user._id},{sorting: req.params.sortingType}, function(err, foundUser){
-      if(!err){
-        res.redirect("/collection");
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
 
-app.get("/othersCollection/:sortingType", function(req,res){
-  console.log(req.body);
-  if(req.isAuthenticated()){
-    User.findByIdAndUpdate({_id: req.body},{sorting: req.params.sortingType}, function(err, foundUser){
-      if(!err){
-        res.redirect("/collection");
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
+// app.get("/othersCollection/:sortingType", function(req,res){
+//   console.log(req.body);
+//   if(req.isAuthenticated()){
+//     User.findByIdAndUpdate({_id: req.body},{sorting: req.params.sortingType}, function(err, foundUser){
+//       if(!err){
+//         res.redirect("/collection");
+//       }else{
+//         console.log(err);
+//       }
+//     });
+//   }else{
+//     res.render("login");
+//   }
+// });
 
 let port = process.env.PORT;
 if (port == null || port == "") {
