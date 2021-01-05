@@ -8,6 +8,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const session = require("express-session");
 const _ = require('lodash');
+const unirest = require("unirest");
 
 const app=express();
 app.set('view engine', 'ejs');
@@ -165,21 +166,54 @@ app.get("/collection/:sortingType", function(req,res){
 });
 
 //////////////////////////////
-
+//// post for entering a record deteals to the page
 app.post("/submit",function(req,res){
-  const record = new Record({
-    name: _.startCase(req.body.name),
-    artist: _.startCase(req.body.artist),
-    year: req.body.year,
-    condition: req.body.condition,
-    img: req.body.img,
-    rating: req.body.rating,
-    userId: req.user._id
-  });
-  record.save();
-  res.redirect("/collection");
+  var imgUrl;
+  var albumName = req.body.name;
+  albumName = albumName.replace(" ","+");
+
+  const unirestSearch = unirest("GET", "https://google-search3.p.rapidapi.com/api/v1/images/q="+albumName+"+album+cover&num=1");
+  unirestSearch.headers({
+      "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+      "x-rapidapi-host": "google-search3.p.rapidapi.com",
+      "useQueryString": true
+  })
+
+  if(req.body.img.localeCompare("")==0){
+
+    unirestSearch.end(function (response) {
+    	if (response.error) throw new Error(response.error);
+      imgUrl=response.body.image_results[0].image.src;
+      const record = new Record({
+        name: _.startCase(req.body.name),
+        artist: _.startCase(req.body.artist),
+        year: req.body.year,
+        condition: req.body.condition,
+        img: imgUrl,
+        rating: req.body.rating,
+        userId: req.user._id
+      });
+      record.save();
+      res.redirect("/collection");
+    });
+
+}else{
+    imgUrl=req.body.img;
+    const record = new Record({
+      name: _.startCase(req.body.name),
+      artist: _.startCase(req.body.artist),
+      year: req.body.year,
+      condition: req.body.condition,
+      img: imgUrl,
+      rating: req.body.rating,
+      userId: req.user._id
+    });
+    record.save();
+    res.redirect("/collection");
+  }
 });
 
+//// post for edit page
 app.post("/edit", function(req,res){
   Record.findById(req.body.recordId, function(err, foundRecord){
     if(err){
@@ -190,6 +224,7 @@ app.post("/edit", function(req,res){
   });
 });
 
+//// post for submit page
 app.post("/submitChange", function(req,res){
   Record.findByIdAndUpdate({_id: req.body.recordId}, {
     name: _.startCase(req.body.name),
@@ -207,6 +242,7 @@ app.post("/submitChange", function(req,res){
   });
 });
 
+//// post for delete button
 app.post("/delete", function(req,res){
   Record.findOneAndDelete({_id: req.body.recordId}, function(err, record){
     if(err){
@@ -217,6 +253,7 @@ app.post("/delete", function(req,res){
   });
 });
 
+//// post for add button
 app.get("/add", function(req,res){
   if(req.isAuthenticated()){
     res.render("add", {user: req.body.user});
@@ -280,8 +317,6 @@ app.post("/searchUser", function(req,res){
     res.render("login");
   }
 });
-
-
 
 // app.get("/othersCollection/:sortingType", function(req,res){
 //   console.log(req.body);
