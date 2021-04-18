@@ -8,6 +8,10 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 const session = require("express-session");
 const _ = require('lodash');
+const gis = require('g-i-s');
+
+// image search api
+const unirest = require("unirest");
 
 const app=express();
 app.set('view engine', 'ejs');
@@ -47,7 +51,6 @@ const usersSchema = new mongoose.Schema({
 });
 usersSchema.plugin(passportLocalMongoose);
 const User = new mongoose.model("User", usersSchema);
-
 
 passport.use(User.createStrategy());
 
@@ -167,18 +170,51 @@ app.get("/collection/:sortingType", function(req,res){
 //////////////////////////////
 
 app.post("/submit",function(req,res){
-  const record = new Record({
-    name: _.startCase(req.body.name),
-    artist: _.startCase(req.body.artist),
-    year: req.body.year,
-    condition: req.body.condition,
-    img: req.body.img,
-    rating: req.body.rating,
-    userId: req.user._id
-  });
-  record.save();
-  res.redirect("/collection");
+  if(req.isAuthenticated()){
+    let searchString = req.body.artist + " " + req.body.name+ " cover image";
+
+    let search = unirest("GET", "https://bing-image-search1.p.rapidapi.com/images/search");
+    search.headers({
+      "x-rapidapi-key": process.env.RAPIDAPI_KEY,
+      "x-rapidapi-host": "bing-image-search1.p.rapidapi.com",
+      "useQueryString": true
+    });
+    search.query({
+      "q": searchString,
+      "count": "5"
+    });
+    callSearcUni(search, req, res);
+
+  }else{
+    res.render("login");
+  }
 });
+
+async function callSearcUni(search, req, res) {
+  search.end(function (response) {
+    if (!response.error) {
+      let imgUrl = "";
+      if (response.body.value !== undefined && response.body.value[0] !== undefined && response.body.value[0].thumbnailUrl !== undefined && req.body.img === "") {
+        imgUrl = response.body.value[0].thumbnailUrl;
+      }
+
+      const record = new Record({
+        name: _.startCase(req.body.name),
+        artist: _.startCase(req.body.artist),
+        year: req.body.year,
+        condition: req.body.condition,
+        rating: req.body.rating,
+        userId: req.user._id,
+        img: imgUrl
+      });
+      record.save();
+      res.render("add", {status: "success"});
+    }else{
+      res.redirect("/add");
+    }
+  });
+}
+
 
 app.post("/edit", function(req,res){
   Record.findById(req.body.recordId, function(err, foundRecord){
@@ -219,7 +255,7 @@ app.post("/delete", function(req,res){
 
 app.get("/add", function(req,res){
   if(req.isAuthenticated()){
-    res.render("add", {user: req.body.user});
+    res.render("add", {user: req.body.user, status: "adding"});
   }else{
     res.redirect("/");
   }

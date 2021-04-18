@@ -8,17 +8,32 @@
     <label for="name">Album name:</label>
     <input class="form-control" type="text" name="name" placeholder="Album name">
     <label for="year">Year of release:</label>
-    <input class="form-control" type="text" name="year" placeholder="Year of release">
+    <input class="form-control" type="number" name="year" min="1900" max="2099" step="1" value="2020" placeholder="Year of release"/>
     <label for="rating">Rating:</label>
     <input class="form-control" type="text" name="rating" placeholder="Your rating (1 to 5)">
     <label for="condition">Vinyl condition:</label>
     <input class="form-control" type="text" name="condition" placeholder="Condition">
     <label for="img">Cover image URL:</label>
-    <input class="form-control" type="text" name="img" placeholder="Cover image URL">
+    <input class="form-control" type="url" name="img" placeholder="Cover image URL">
     </div>
     <button class="btn btn-primary submit-button" type="submit" name="button">Submit</button>
 
   </form>
 
+  <% if(status !== undefined)
+    if(status === "success"){ 
+  %>
+      <div id="alert-div-add" class="alert alert-success alert-divs" role="alert" style="display: block;">
+        New record sucessfully added!
+      </div>
+  <%  
+    }else if(status === "error"){
+  %>
+      <div id="alert-div-add" class="alert alert-error alert-divs" role="alert" style="display: block;">
+        Something went wrong.
+      </div>
+  <%
+    }
+  %>
 
 <%- include("partials/footer.ejs"); -%>
