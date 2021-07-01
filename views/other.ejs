@@ -3,7 +3,7 @@
 <div class="table-div">
   <h1>View other users collection!</h1>
 
-  <form action="/searchUser" method="post">
+  <form action="/users/search" method="post">
     <label for="searchedUser">Search user:</label>
     <div class="search-div">
       <input type="text" class="form-control search-bar" name="searchedUser" value="">
@@ -15,9 +15,7 @@
   <ul>
     <% users.forEach(function(user){ %>
     <li>
-      <form class="" action="/showUser" method="post">
-        <input type="hidden" name="userId" value="<%=user._id%>">
-        <input type="hidden" name="username" value="<%=user.username%>">
+      <form class="" action="/users/collection/<%=user._id%>/<%=user.username%>" method="get">
         <button type="submit" class="btn-link users-list"><%=user.username%></button>
       </form>
     </li>

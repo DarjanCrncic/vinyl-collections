@@ -1,6 +1,6 @@
 <%- include("partials/header.ejs"); -%>
 
-  <form class="" action="/submitChange" method="post">
+  <form class="" action="/edit/<%=record._id %>" method="post">
     <div class="submit-div">
     <label for="artist">Artist name:</label>
     <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">

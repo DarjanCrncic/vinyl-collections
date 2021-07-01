@@ -6,17 +6,17 @@
       <th style="width: 2.5%" scope="col">Cover</th>
       <th style="width: 21%" scope="col">Artist
         <div class="up-down-div">
-          <a href="/collection/artist" ><i class="fas fa-caret-up"></i></a><a href="/collection/rartist"><i class="fas fa-caret-down"></i></a>
+          <a href="/collection/artist/1" ><i class="fas fa-caret-up"></i></a><a href="/collection/artist/-1"><i class="fas fa-caret-down"></i></a>
         </div>
       </th>
       <th style="width: 21%" scope="col">Ablum Name
         <div class="up-down-div">
-          <a href="/collection/name" ><i class="fas fa-caret-up"></i></a><a href="/collection/rname"><i class="fas fa-caret-down"></i></a>
+          <a href="/collection/name/1" ><i class="fas fa-caret-up"></i></a><a href="/collection/name/-1"><i class="fas fa-caret-down"></i></a>
         </div>
       </th>
       <th style="width: 10%; text-align: center;" scope="col" >Year of Release
         <div class="up-down-div">
-          <a href="/collection/year" ><i class="fas fa-caret-up"></i></a><a href="/collection/ryear"><i class="fas fa-caret-down"></i></a>
+          <a href="/collection/year/1" ><i class="fas fa-caret-up"></i></a><a href="/collection/year/-1"><i class="fas fa-caret-down"></i></a>
         </div>
       </th>
       <th style="width: 6%; text-align: center; " scope="col">Rating</th>
@@ -38,13 +38,11 @@
         <td style="text-align: center"><%= record.rating %></td>
         <td style="text-align: center"><%= record.condition %></td>
         <td style="text-align: center" class="hidden-column">
-          <form class="editDelete" action="/edit" method="post">
+          <form class="editDelete" action="/edit/<%= record._id %>" method="get">
             <button  type="submit" name="button"><i class="fas fa-pen show-icon"></i></button>
-            <input type="hidden" name="recordId" value="<%= record._id %>">
           </form>
-          <form class="editDelete" action="/delete" method="post">
+          <form class="editDelete" action="/delete/<%= record._id %>" method="post">
             <button type="submit" name="button"><i class="fas fa-trash-alt show-icon"></i></button>
-            <input type="hidden" name="recordId" value="<%= record._id %>">
           </form>
         </td>
       </tr>

@@ -1,25 +1,23 @@
 require("dotenv").config();
-const express=require("express");
-const ejs = require("ejs");
+const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 const passport = require("passport");
-const passportLocalMongoose = require("passport-local-mongoose");
 const session = require("express-session");
-const _ = require('lodash');
-const gis = require('g-i-s');
 
-// image search api
-const unirest = require("unirest");
+const User = require('./models/User');
+const Record = require('./models/Record');
+
+const authRoutes = require('./routes/auth');
+const collectionRoutes = require('./routes/collection');
+const userRoutes = require('./routes/user');
 
 const app=express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-//////////////////// configuring mongodb models, session, passport
-
+// configuring mongodb models, session, passport
 app.use(session({
   secret: process.env.SECRET_STRING,
   resave: false,
@@ -31,26 +29,6 @@ app.use(passport.session());
 
 mongoose.connect("mongodb+srv://admin-darjan:"+process.env.MONGO_PASSWORD+"@cluster0.zo4lz.mongodb.net/vinylCollectionDb?retryWrites=true&w=majority",{ useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.set('useFindAndModify', false);
-
-const recordsSchema = new mongoose.Schema({
-  img: {type: String, default: "-"},
-  artist: {type: String, default: "-"},
-  name: {type: String, default: "-"},
-  year: Number,
-  rating: {type: String, default: "-"},
-  condition: {type: String, default: "-"},
-  userId: String
-});
-
-const Record = new mongoose.model("Record", recordsSchema);
-
-const usersSchema = new mongoose.Schema({
-  username: String,
-  password: String,
-  sorting: {type: String, default: "artist"},
-});
-usersSchema.plugin(passportLocalMongoose);
-const User = new mongoose.model("User", usersSchema);
 
 passport.use(User.createStrategy());
 
@@ -64,276 +42,16 @@ passport.deserializeUser(function(id, done) {
   });
 });
 
-var sortingOrder=1;
-
-//////////////// gets and posts
-
-app.post("/register", function(req,res){
-  User.register({username: req.body.username}, req.body.password, function(err, user){
-    if(err){
-      console.log(err);
-      res.redirect("/register");
-    }else{
-      passport.authenticate("local")(req,res,function(){
-        res.redirect("/collection");
-      });
-    }
-  });
-});
-
-app.post("/login", function(req,res){
-  const user = new User({
-    username: req.body.username,
-    password: req.body.password
-  });
-
-  req.login(user, function(err){
-    if(err){
-      console.log(err);
-      res.redirect("/login");
-    }else{
-      passport.authenticate("local",{failureRedirect: '/login'})(req,res,function(){
-        res.redirect("/collection");
-      });
-    }
-  });
-});
-
-app.get("/login",function(req,res){
-  if(req.isAuthenticated()){
-    res.redirect("/collection")
-  }else{
-    res.render("login");
-  }
-});
-
-app.get("/register",function(req,res){
-  if(req.isAuthenticated()){
-    res.redirect("/collection")
-  }else{
-    res.render("register");
-  }
-});
-
-app.get("/logout", function(req,res){
-  req.logout();
-  res.redirect('/');
-});
-
+// routes
 app.get("/", function(req, res){
   res.render("home");
 });
 
-/////////////////////// collections section
+app.use(authRoutes);
+app.use(collectionRoutes);
+app.use(userRoutes);
 
-app.get("/collection", function(req,res){
-
-  if(req.isAuthenticated()){
-    var sort = {};
-    sort[req.user.sorting] = sortingOrder;
-    Record.find({userId: req.user._id}).sort(sort).exec(function(err, foundRecords) {
-      if(!err){
-        res.render("collection", {records: foundRecords})
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
-
-/////////////// sortingCode
-
-app.get("/collection/:sortingType", function(req,res){
-  if(req.isAuthenticated()){
-    let sortingStatus= req.params.sortingType;
-    if(req.params.sortingType.substring(0,1)!="r"){
-      sortingOrder=1;
-    }
-    else{
-      sortingOrder=-1;
-      sortingStatus = req.params.sortingType.substring(1);
-    }
-    User.findByIdAndUpdate({_id: req.user._id},{sorting: sortingStatus}, function(err, foundUser){
-      if(!err){
-        res.redirect("/collection");
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
-
-//////////////////////////////
-
-app.post("/submit",function(req,res){
-  if(req.isAuthenticated()){
-    let searchString = req.body.artist + " " + req.body.name+ " cover image";
-
-    let search = unirest("GET", "https://bing-image-search1.p.rapidapi.com/images/search");
-    search.headers({
-      "x-rapidapi-key": process.env.RAPIDAPI_KEY,
-      "x-rapidapi-host": "bing-image-search1.p.rapidapi.com",
-      "useQueryString": true
-    });
-    search.query({
-      "q": searchString,
-      "count": "5"
-    });
-    callSearcUni(search, req, res);
-
-  }else{
-    res.render("login");
-  }
-});
-
-async function callSearcUni(search, req, res) {
-  search.end(function (response) {
-    if (!response.error) {
-      let imgUrl = "";
-      if (response.body.value !== undefined && response.body.value[0] !== undefined && response.body.value[0].thumbnailUrl !== undefined && req.body.img === "") {
-        imgUrl = response.body.value[0].thumbnailUrl;
-      }
-
-      const record = new Record({
-        name: _.startCase(req.body.name),
-        artist: _.startCase(req.body.artist),
-        year: req.body.year,
-        condition: req.body.condition,
-        rating: req.body.rating,
-        userId: req.user._id,
-        img: imgUrl
-      });
-      record.save();
-      res.render("add", {status: "success"});
-    }else{
-      res.redirect("/add");
-    }
-  });
-}
-
-
-app.post("/edit", function(req,res){
-  Record.findById(req.body.recordId, function(err, foundRecord){
-    if(err){
-      console.log(err);
-    }else{
-      res.render("edit", {record: foundRecord});
-    }
-  });
-});
-
-app.post("/submitChange", function(req,res){
-  Record.findByIdAndUpdate({_id: req.body.recordId}, {
-    name: _.startCase(req.body.name),
-    artist: _.startCase(req.body.artist),
-    year: req.body.year,
-    condition: req.body.condition,
-    img: req.body.img,
-    rating: req.body.rating
-  }, function(err,record){
-    if(err){
-      console.log(err);
-    }else{
-      res.redirect("/collection");
-    };
-  });
-});
-
-app.post("/delete", function(req,res){
-  Record.findOneAndDelete({_id: req.body.recordId}, function(err, record){
-    if(err){
-      console.log(err);
-    }else{
-      res.redirect("/collection");
-    };
-  });
-});
-
-app.get("/add", function(req,res){
-  if(req.isAuthenticated()){
-    res.render("add", {user: req.body.user, status: "adding"});
-  }else{
-    res.redirect("/");
-  }
-});
-
-/////////////////////// other users section
-
-app.get("/other", function(req,res){
-  if(req.isAuthenticated()){
-    User.find({_id: { $ne: req.user._id }}, function(err, foundUsers){
-      if(!err){
-        res.render("other", {users: foundUsers})
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-})
-
-app.post("/showUser", function(req,res){
-  if(req.isAuthenticated()){
-    Record.find({userId: req.body.userId}, function(err, foundRecords){
-      if(!err){
-        res.render("othersCollection", {records: foundRecords, username: req.body.username})
-      }else{
-        console.log(err);
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
-
-app.post("/searchUser", function(req,res){
-  if(req.isAuthenticated()){
-    User.findOne({username: req.body.searchedUser}, function(err, foundUser){
-      if(!err && foundUser){
-        Record.find({userId: foundUser._id}, function(err, foundRecords){
-          if(!err){
-            res.render("othersCollection", {records: foundRecords, username: req.body.searchedUser});
-          }else{
-            console.log(err);
-          }
-        });
-      }else{
-        User.find({_id: { $ne: req.user._id }}, function(err, foundUsers){
-          if(!err){
-            res.render("other", {users: foundUsers})
-          }else{
-            console.log(err);
-          }
-        });
-      }
-    });
-  }else{
-    res.render("login");
-  }
-});
-
-
-
-// app.get("/othersCollection/:sortingType", function(req,res){
-//   console.log(req.body);
-//   if(req.isAuthenticated()){
-//     User.findByIdAndUpdate({_id: req.body},{sorting: req.params.sortingType}, function(err, foundUser){
-//       if(!err){
-//         res.redirect("/collection");
-//       }else{
-//         console.log(err);
-//       }
-//     });
-//   }else{
-//     res.render("login");
-//   }
-// });
-
+// server startup
 let port = process.env.PORT;
 if (port == null || port == "") {
   port = 3000;
