@@ -1,13 +1,28 @@
 <%- include("partials/header.ejs"); -%>
 
-<form action="/login" method="post">
-  <div class="submit-div">
-    <label for="username">Username</label>
-    <input type="text" class="form-control" name="username" placeholder="Enter username">
-    <label for="password">Password</label>
-    <input type="password" class="form-control" name="password" placeholder="Password">
-  </div>
-  <button type="submit" class="btn btn-primary submit-button">Sign In</button>
-</form>
+  <h1 class="auth-page-title">Login:</h1>
 
-<%- include("partials/footer.ejs"); -%>
+  <div class="submit-div">
+    <form action="/login" method="post">
+      <label for="username">Username</label>
+      <input type="text" class="form-control" name="username" placeholder="Enter username" value=<%=oldInput.username%>>
+      <label for="password">Password</label>
+      <input type="password" class="form-control" name="password" placeholder="Password" value=<%=oldInput.password%>>
+
+      <button type="submit" class="btn btn-primary sign-in-button">Sign In</button>
+    </form>
+
+
+    <% if (!validationErrors.isEmpty && validationErrors.length > 0) { %>
+      <div class="alert alert-danger" role="alert">
+        <% validationErrors.forEach(error=> { %>
+          <p>
+            <%= error.msg %>
+          </p>
+          <% }) %>
+      </div>
+    <% } %>
+
+  </div>
+
+  <%- include("partials/footer.ejs"); -%>

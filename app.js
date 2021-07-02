@@ -6,7 +6,6 @@ const passport = require("passport");
 const session = require("express-session");
 
 const User = require('./models/User');
-const Record = require('./models/Record');
 
 const authRoutes = require('./routes/auth');
 const collectionRoutes = require('./routes/collection');
@@ -40,6 +39,11 @@ passport.deserializeUser(function(id, done) {
   User.findById(id, function(err, user) {
     done(err, user);
   });
+});
+
+app.use((req, res, next) => { 
+  res.locals.isAuthenticated = req.session.isLoggedIn;
+  next();
 });
 
 // routes

@@ -1,22 +1,42 @@
 <%- include("partials/header.ejs"); -%>
 
-  <form class="" action="/edit/<%=record._id %>" method="post">
+  <form class="" action="/edit/<%=record._id %>" method="post" id="editRecordForm">
     <div class="submit-div">
-    <label for="artist">Artist name:</label>
-    <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">
-    <label for="name">Album name:</label>
-    <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
-    <label for="year">Year of release:</label>
-    <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release">
-    <label for="rating">Rating:</label>
-    <input class="form-control" type="text" value="<%=record.rating %>" name="rating" placeholder="Your rating">
-    <label for="condition">Vinyl condition:</label>
-    <input class="form-control" type="text" value="<%=record.condition %>" name="condition" placeholder="Condition">
-    <label for="img">Cover image URL:</label>
-    <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL">
-    <input type="hidden" name="recordId" value="<%= record._id %>">
+      <label for="artist">Artist name:</label>
+      <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">
+      <label for="name">Album name:</label>
+      <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
+      <label for="year">Year of release:</label>
+      <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release">
+      
+      <label for="rating">Rating:</label>
+      <select name="rating" id="rating" form="editRecordForm" class="form-control">
+        <option value="">Choose the record rating</option>
+        <option value="1" <%= (record.rating == "1") ? "selected" : "" %> >1</option>
+        <option value="2" <%= (record.rating == "2") ? "selected" : "" %> >2</option>
+        <option value="3" <%= (record.rating == "3") ? "selected" : "" %> >3</option>
+        <option value="4" <%= (record.rating == "4") ? "selected" : "" %> >4</option>
+        <option value="5" <%= (record.rating == "5") ? "selected" : "" %> >5</option>
+      </select>
+
+      <label for="condition">Vinyl condition:</label>
+      <select name="condition" id="condition" form="editRecordForm" class="form-control">
+        <option value="">Choose the record condition</option>
+        <option value="P" <%= (record.condition == "P") ? "selected" : "" %> >P (poor)</option>
+        <option value="G" <%= (record.condition == "G") ? "selected" : "" %> >G (good)</option>
+        <option value="VG" <%= (record.condition == "VG") ? "selected" : "" %> >VG (very good)</option>
+        <option value="VG+" <%= (record.condition == "VG+") ? "selected" : "" %> >VG+ (very good +)</option>
+        <option value="E" <%= (record.condition == "E") ? "selected" : "" %> >E (excelent)</option>
+        <option value="NM" <%= (record.condition == "NM") ? "selected" : "" %> >NM (near mint)</option>
+        <option value="M" <%= (record.condition == "M") ? "selected" : "" %> >M (mint)</option>
+      </select>
+
+
+      <label for="img">Cover image URL:</label>
+      <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL">
+      <input type="hidden" name="recordId" value="<%= record._id %>">
     </div>
     <button class="btn btn-primary submit-button" type="submit" name="button">Submit</button>
   </form>
 
-<%- include("partials/footer.ejs"); -%>
+  <%- include("partials/footer.ejs"); -%>

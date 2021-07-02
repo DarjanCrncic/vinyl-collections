@@ -20,9 +20,11 @@
         <ul class="nav navbar-nav navbar-right">
           <!-- 6 -->
           <li id="home"><a href="/">HOME</a></li>
+          <% if (isAuthenticated) { %>
           <li id="collection"><a href="/collection">MY COLLECTION</a></li>
           <li id="other"><a href="/users">OTHER USERS</a></li>
           <li id="logout"><a class="logout" href="/logout">LOG OUT</a></li>
+          <% } %>
         </ul>
     </div>
   </nav>
