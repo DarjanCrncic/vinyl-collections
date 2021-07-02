@@ -4,14 +4,14 @@
     <form class="" action="/edit/<%=record._id %>" method="post" id="editRecordForm">
 
       <label for="artist">Artist name:</label>
-      <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name">
+      <input class="form-control" type="text" value="<%=record.artist %>" name="artist" placeholder="Artist name" disabled>
       <label for="name">Album name:</label>
-      <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name">
+      <input class="form-control" type="text" value="<%=record.name %>" name="name" placeholder="Album name" disabled>
       <label for="year">Year of release:</label>
-      <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release">
+      <input class="form-control" type="text" value="<%=record.year %>" name="year" placeholder="Year of release" disabled>
 
       <label for="rating">Rating:</label>
-      <select name="rating" id="rating" form="editRecordForm" class="form-control">
+      <select name="rating" id="rating" form="editRecordForm" class="form-control" disabled>
         <option value="">Choose the record rating</option>
         <option value="1" <%=(record.rating=="1" ) ? "selected" : "" %> >1</option>
         <option value="2" <%=(record.rating=="2" ) ? "selected" : "" %> >2</option>
@@ -21,7 +21,7 @@
       </select>
 
       <label for="condition">Vinyl condition:</label>
-      <select name="condition" id="condition" form="editRecordForm" class="form-control">
+      <select name="condition" id="condition" form="editRecordForm" class="form-control" disabled>
         <option value="">Choose the record condition</option>
         <option value="P" <%=(record.condition=="P" ) ? "selected" : "" %> >P (poor)</option>
         <option value="G" <%=(record.condition=="G" ) ? "selected" : "" %> >G (good)</option>
@@ -34,10 +34,10 @@
 
 
       <label for="img">Cover image URL:</label>
-      <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL">
+      <input class="form-control" type="text" value="<%=record.img %>" name="img" placeholder="Cover image URL" disabled>
+      
       <input type="hidden" name="recordId" value="<%= record._id %>">
 
-      <button class="btn btn-primary sign-in-button" type="submit" name="button">Submit</button>
     </form>
   </div>
 

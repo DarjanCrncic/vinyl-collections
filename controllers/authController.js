@@ -100,7 +100,7 @@ exports.postLogin = (req, res, next) => {
 };
 
 exports.getLogout = (req, res, next) => {
+    req.session.isLoggedIn = false;
     req.logout();
-    req.isLoggedIn = false;
     res.redirect('/');
 };

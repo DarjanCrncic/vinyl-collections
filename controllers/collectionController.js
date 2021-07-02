@@ -88,3 +88,14 @@ exports.deleteRecord = (req, res, next) => {
         };
     });
 }
+
+exports.getViewRecord = (req, res, next) => {
+    const recordId = req.params.recordId;
+    Record.findById(recordId, function (err, foundRecord) {
+        if (err) {
+            console.log(err);
+        } else {
+            res.render("view", { record: foundRecord });
+        }
+    });
+}

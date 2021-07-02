@@ -10,7 +10,7 @@
       <th style="width: 10%; text-align: center;" scope="col" >Year of Release</th>
       <th style="width: 6%; text-align: center; " scope="col">Rating</th>
       <th style="width: 6%; text-align: center;" scope="col">Condition</th>
-      <th style="width: 5%" class="hidden-column" scope="col"></th>
+      <th style="width: 5%; text-align: center;" scope="col">Actions</th>
     </tr>
   </thead>
   <tbody>
@@ -23,7 +23,9 @@
         <td style="text-align: center"><%= record.rating %></td>
         <td style="text-align: center"><%= record.condition %></td>
         <td style="text-align: center" class="hidden-column">
-
+          <form class="editDelete" action="/view/<%= record._id %>" method="get">
+            <button  type="submit" name="button"><i class="fas fa-search show-icon"></i></button>
+          </form>
         </td>
       </tr>
     <% }) %>

@@ -18,4 +18,6 @@ router.post('/edit/:recordId', isAuth, collectionController.postEditRecord);
 
 router.post('/delete/:recordId', isAuth, collectionController.deleteRecord);
 
+router.get('/view/:recordId', isAuth, collectionController.getViewRecord)
+
 module.exports = router;
