@@ -54,9 +54,10 @@
               <form class="editDelete" action="/edit/<%= record._id %>/<%= orderBy %>/<%= order %>/<%= page %>" method="get">
                 <button type="submit" name="button"><i class="fas fa-pen show-icon"></i></button>
               </form>
-              <form class="editDelete" action="/delete/<%= record._id %>/<%= orderBy %>/<%= order %>/<%= page %>" method="post">
+              <form class="editDelete" action="/delete/<%= record._id %>/<%= orderBy %>/<%= order %>/<%= page %>" method="post" onsubmit="return confirm('Are you sure you want to delete this record?');">
                 <button type="submit" name="button"><i class="fas fa-trash-alt show-icon"></i></button>
               </form>
+      
             </td>
           </tr>
           <% }) %>
