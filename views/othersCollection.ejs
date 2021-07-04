@@ -5,9 +5,27 @@
     <thead>
     <tr>
       <th style="width: 2.5%" scope="col">Cover</th>
-      <th style="width: 21%" scope="col">Artist</th>
-      <th style="width: 21%" scope="col">Album Name</th>
-      <th style="width: 10%; text-align: center;" scope="col" >Year of Release</th>
+      <th style="width: 21%" scope="col">Artist
+        <div class="up-down-div">
+          <a href="/users/collection/<%= userId %>/<%= username %>/artist/1/<%= Number(page)%>"><i class="fas fa-caret-up"></i></a>
+          <a href="/users/collection/<%= userId %>/<%= username %>/artist/-1/<%= Number(page)%>"><i
+              class="fas fa-caret-down"></i></a>
+        </div>
+      </th>
+      <th style="width: 21%" scope="col">Album Name
+        <div class="up-down-div">
+          <a href="/users/collection/<%= userId %>/<%= username %>/name/1/<%= Number(page)%>"><i class="fas fa-caret-up"></i></a>
+          <a href="/users/collection/<%= userId %>/<%= username %>/name/-1/<%= Number(page)%>"><i
+              class="fas fa-caret-down"></i></a>
+        </div>
+      </th>
+      <th style="width: 10%; text-align: center;" scope="col" >Year of Release
+        <div class="up-down-div">
+          <a href="/users/collection/<%= userId %>/<%= username %>/year/1/<%= Number(page)%>"><i class="fas fa-caret-up"></i></a>
+          <a href="/users/collection/<%= userId %>/<%= username %>/year/-1/<%= Number(page)%>"><i
+              class="fas fa-caret-down"></i></a>
+        </div>
+      </th>
       <th style="width: 6%; text-align: center; " scope="col">Rating</th>
       <th style="width: 6%; text-align: center;" scope="col">Condition</th>
       <th style="width: 5%; text-align: center;" scope="col">Actions</th>
@@ -31,6 +49,27 @@
     <% }) %>
   </tbody>
   </table>
+
+  <div class="pagination-holder">
+    <form action="/users/collection/<%= userId %>/<%= username %>/<%= orderBy %>/<%= order %>/<%= Number(page)-1 %>">
+      <button type="submit" class="btn btn-primary"
+        <% if(page == 1) { %>
+          disabled
+        <% } %>
+      ><</button>
+    </form>
+    
+    <div class="page-indicator"><%= page %></div>
+
+    <form action="/users/collection/<%= userId %>/<%= username %>/<%= orderBy %>/<%= order %>/<%= Number(page)+1 %>">
+      <button type="submit" class="btn btn-primary" 
+        <% if(!more) { %>
+          disabled
+        <% } %>
+      >></button>
+    </form>
+  </div>
+
 </div>
 
 
