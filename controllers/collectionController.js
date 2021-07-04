@@ -3,27 +3,23 @@ const unirest = require("unirest");
 const searchApi = require('../middleware/searchRecordImage');
 const _ = require('lodash');
 
-exports.getCollection = (req, res, next) => {
-    var sort = {
-        'artist': 1
-    };
-    Record.find({ userId: req.user._id }).sort(sort).exec(function (err, foundRecords) {
-        if (!err) {
-            res.render("collection", { records: foundRecords })
-        } else {
-            console.log(err);
-        }
-    });
-}
-
-
 exports.getCollectionSorted = (req, res, next) => {
+    let page = Number(req.params.page);
+    let more = false;
+    if(page < 1) page = 1;
+
     var sort = {};
     sort[req.params.orderBy] = Number.parseInt(req.params.order);
-    
-    Record.find({ userId: req.user._id }).sort(sort).exec(function (err, foundRecords) {
+    Record.find({ userId: req.user._id }).sort(sort).skip((page-1)*10).limit(10+1).exec(function (err, foundRecords) {
         if (!err) {
-            res.render("collection", { records: foundRecords })
+            if (foundRecords.length == 11) more = true;
+            res.render("collection", { 
+                records: foundRecords.slice(0, 10),
+                page: page,
+                more: more,
+                order: req.params.order,
+                orderBy: req.params.orderBy
+             })
         } else {
             console.log(err);
         }
@@ -57,7 +53,12 @@ exports.getEditRecord = (req, res, next) => {
         if (err) {
             console.log(err);
         } else {
-            res.render("edit", { record: foundRecord });
+            res.render("edit", { 
+                record: foundRecord,
+                orderBy: req.params.orderBy,
+                order: req.params.order,
+                page: req.params.page
+            });
         }
     });
 }
@@ -74,7 +75,7 @@ exports.postEditRecord = (req, res, next) => {
         if (err) {
             console.log(err);
         } else {
-            res.redirect("/collection");
+            res.redirect("/collection/"+req.params.orderBy+"/"+req.params.order+"/"+req.params.page);
         };
     });
 }
@@ -84,7 +85,7 @@ exports.deleteRecord = (req, res, next) => {
         if (err) {
             console.log(err);
         } else {
-            res.redirect("/collection");
+            res.redirect("/collection/"+req.params.orderBy+"/"+req.params.order+"/"+req.params.page);
         };
     });
 }

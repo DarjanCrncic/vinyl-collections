@@ -161,7 +161,7 @@ form input {
   width: 80%;
 }
 
-.btn-primary:hover, .home-btn:hover {
+.btn-primary:hover, .home-btn:hover{
   color: white;
   background-color: #52575d;
   border-color: #52575d;
@@ -217,4 +217,33 @@ form input {
 .image-edit-screen {
   width: 100%;
   height: 100%;
+}
+
+/* pagination */
+.pagination-holder {
+  text-align: center;
+}
+
+.pagination-holder .btn-primary {
+  background-color: white;
+  border-color: #52575d;
+  color: #52575d;
+}
+
+.pagination-holder .btn-primary:hover {
+  color: white;
+  background-color: #52575d;
+  border-color: #52575d;
+} 
+
+.page-indicator {
+  display: inline-block;
+  
+  border: 1px solid #52575d;
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.pagination-holder form {
+  display: inline-block;
 }

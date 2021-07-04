@@ -4,7 +4,7 @@ const { validationResult } = require('express-validator');
 
 exports.getRegister = (req, res, next) => {
     if (req.isAuthenticated()) {
-        res.redirect("/collection")
+        res.redirect("/collection/artist/1/1")
     } else {
         res.render("register", {
             oldInput: {
@@ -34,7 +34,7 @@ exports.postRegister = (req, res, next) => {
             res.redirect("/register");
         } else {
             passport.authenticate("local")(req, res, function () {
-                res.redirect("/collection");
+                res.redirect("/collection/artist/1/1");
             });
         }
     });
@@ -42,7 +42,7 @@ exports.postRegister = (req, res, next) => {
 
 exports.getLogin = (req, res, next) => {
     if (req.isAuthenticated()) {
-        res.redirect("/collection")
+        res.redirect("/collection/artist/1/1")
     } else {
         res.render("login", {
             oldInput: {
@@ -92,7 +92,7 @@ exports.postLogin = (req, res, next) => {
                 req.logIn(user, function (err) {
                     if (err) { return next(err); }
                     req.session.isLoggedIn = true;
-                    return res.redirect('/collection');
+                    return res.redirect('/collection/artist/1/1');
                 });
             })(req, res, next);
         }

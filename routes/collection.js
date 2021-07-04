@@ -4,19 +4,17 @@ const isAuth = require('../middleware/is-auth');
 
 const router = express.Router();
 
-router.get('/collection', isAuth, collectionController.getCollection);
-
-router.get('/collection/:orderBy/:order', isAuth, collectionController.getCollectionSorted);
+router.get('/collection/:orderBy/:order/:page', isAuth, collectionController.getCollectionSorted);
 
 router.post('/record', isAuth, collectionController.postRecord);
 
 router.get('/add', isAuth, collectionController.getAdd);
 
-router.get('/edit/:recordId', isAuth, collectionController.getEditRecord);
+router.get('/edit/:recordId/:orderBy/:order/:page', isAuth, collectionController.getEditRecord);
 
-router.post('/edit/:recordId', isAuth, collectionController.postEditRecord);
+router.post('/edit/:recordId/:orderBy/:order/:page', isAuth, collectionController.postEditRecord);
 
-router.post('/delete/:recordId', isAuth, collectionController.deleteRecord);
+router.post('/delete/:recordId/:orderBy/:order/:page', isAuth, collectionController.deleteRecord);
 
 router.get('/view/:recordId', isAuth, collectionController.getViewRecord)
 
